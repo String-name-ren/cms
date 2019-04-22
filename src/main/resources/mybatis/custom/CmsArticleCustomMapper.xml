@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.waterelephant.mapper.custom.CmsArticleCustomMapper">
+  <resultMap id="BaseResultMap" type="com.waterelephant.entity.CmsArticle" extends="com.waterelephant.mapper.CmsArticleMapper.ResultMapWithBLOBs">
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, title, menu_id, menu_name, menu_name_cn, author, abstracts, source, key_word,
+    status, del_flag, create_time, update_time, deploy_time, article_address, browse_count,
+    publish_type, seo_title, seo_description, imgUrl, article_id, successed,content
+  </sql>
+
+  <!--自定义查询-->
+  <select id="selectArticleByCond" parameterType="com.waterelephant.dto.CmsArticleDto" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from cms_article where 1=1 and del_flag = 0
+    <if test="title !=null and title !=''">
+      and title like concat('%',#{title},'%')
+    </if>
+    <if test="author !=null and author !=''">
+      and author like concat('%',#{author},'%')
+    </if>
+    <if test="abstracts !=null and abstracts !=''">
+      and abstracts like concat('%',#{abstracts},'%')
+    </if>
+    <if test="source !=null and source !=''">
+      and source like concat('%',#{source},'%')
+    </if>
+    <if test="keyWord !=null and keyWord !=''">
+      and key_Word like concat('%',#{keyWord},'%')
+    </if>
+    <if test="menuId !=null and menuId !=''">
+      and menu_id = #{menuId,jdbcType=INTEGER}
+    </if>
+    <if test="menuName !=null and menuName !=''">
+      and menu_name like concat('%',#{menuName},'%')
+    </if>
+    <if test="status != null and status !=''">
+      and status = #{status,jdbcType=INTEGER}
+    </if>
+    <if test="publishType != null and publishType !=''">
+      and publish_type = #{publishType,jdbcType=INTEGER}
+    </if>
+    order by deploy_time desc
+  </select>
+
+  <!--查询一条草稿箱的文章-->
+  <select id="getOneArticle"  resultMap="BaseResultMap">
+        select * from cms_article t where t.status=2 order by t.id asc limit 1
+  </select>
+  <!-- 查询最新文章列表 -->
+  <select id="getNewArticle" resultMap="BaseResultMap" >
+    select
+    <include refid="Base_Column_List"/>
+    from cms_article where 1=1
+    and deploy_time is not null
+    and article_address is not null
+    and status = 3
+    order by deploy_time desc
+  </select>
+
+  <!-- 关键字查询 -->
+  <select id="getRelevantArticle" resultMap="BaseResultMap" parameterType="java.lang.String">
+    select
+    <include refid="Base_Column_List"/>
+    from cms_article where 1=1
+    and status = 3
+    <if test="keyWord != '' and keyWord != null">
+      and key_word regexp #{keyWord}
+    </if>
+  </select>
+
+  <!-- 上一篇 -->
+  <select id="lastArticle" resultMap="BaseResultMap" parameterType="java.lang.String">
+    select <include refid="Base_Column_List"/>
+    from cms_article where
+    article_address is not null
+    and status = 3
+    and #{deployTime} <![CDATA[ >= ]]> deploy_time
+    order by deploy_time DESC
+    limit 1,1
+  </select>
+
+  <!-- 下一篇 -->
+  <select id="nextArticle" resultMap="BaseResultMap" parameterType="java.lang.String">
+    select <include refid="Base_Column_List"/>
+    from cms_article where
+    article_address is not null
+    and status = 3
+    and #{deployTime} <![CDATA[ <= ]]> deploy_time
+    order by deploy_time
+    limit 1,1
+  </select>
+
+  <!-- 增加浏览数 -->
+  <update id="addBrowse" parameterType="java.lang.Long" >
+      UPDATE cms_article SET browse_count = browse_count + 1 WHERE id = #{id}
+  </update>
+
+  <select id="selectByMenuNamAndId" resultMap="BaseResultMap"  >
+    select
+    <include refid="Base_Column_List" />
+    from cms_article
+    where menu_name = #{menuName,jdbcType=VARCHAR} and article_id = #{articleId,jdbcType=INTEGER}
+  </select>
+
+</mapper>

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.waterelephant.mapper.custom.CmsMenuCustomMapper" >
+  <resultMap id="BaseResultMap" type="com.waterelephant.entity.CmsMenu" extends="com.waterelephant.mapper.CmsMenuMapper.BaseResultMap">
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, name, parent_id, title, keywords, description, directory, url, num, deleted,
+    create_time, update_time
+  </sql>
+  <select id="findMenuListByParentId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from cms_menu
+    <where>
+      deleted = 0
+      <if test="null != parentId">
+       and parent_id = #{parentId,jdbcType=INTEGER}
+      </if>
+    </where>
+  </select>
+
+  <select id="selectMenuByCond" parameterType="com.waterelephant.dto.CmsMenuCondDto" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from cms_menu
+    <where>
+      deleted = 0
+      <if test="null !=id and '' !=id">
+        and  id = #{id}
+      </if>
+      <if test="null !=name and '' !=name">
+        and  name like concat('%',#{author},'%')
+      </if>
+      <if test="null !=parentId and '' !=parentId">
+        and  parent_id = #{parentId}
+      </if>
+      <if test="null !=title and '' !=title">
+        and title like concat('%',#{},'%')
+      </if>
+    </where>
+  </select>
+
+  <!-- 增加浏览数 -->
+  <update id="updateNum"  parameterType="java.lang.Integer" >
+      UPDATE cms_menu SET num = num + 1 WHERE id = #{id}
+  </update>
+  <select id="getNum" parameterType="java.lang.Integer"  resultType="java.lang.Integer">
+    select num from cms_menu where id = #{id}
+  </select>
+
+  <update id="deleteSubMenu" parameterType="java.lang.Integer" >
+    update cms_menu
+    set  deleted = 1
+    where parent_id = #{parentId,jdbcType=INTEGER}
+  </update>
+
+  <select id="getMenuByName" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from cms_menu
+    where directory = #{menuName,jdbcType=VARCHAR} limit 1
+  </select>
+
+</mapper>

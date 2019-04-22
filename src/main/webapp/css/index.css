@@ -1,0 +1,34 @@
+.coverage {
+	display: block;
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 1010;
+	width: 100%;
+	height: 100%;
+	background: rgba(255, 255, 255, 0.52);
+}
+
+.begImg {
+	width: 80%;
+	height: 80%;
+	position: absolute;
+	top: 10%;
+	left: 10%;
+}
+
+.Img_ {
+	width: 100%;
+	height: 100%;
+}
+
+.handle{
+	float: right;
+    color: #f10633;
+    font-size: 30px;
+}
+
+.preview .img img{
+	width:100%;
+	height:100%;
+	}

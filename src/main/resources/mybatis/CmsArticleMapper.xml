@@ -1,0 +1,337 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.waterelephant.mapper.CmsArticleMapper" >
+  <resultMap id="BaseResultMap" type="com.waterelephant.entity.CmsArticle" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="title" property="title" jdbcType="VARCHAR" />
+    <result column="menu_id" property="menuId" jdbcType="INTEGER" />
+    <result column="menu_name" property="menuName" jdbcType="VARCHAR" />
+    <result column="menu_name_cn" property="menuNameCn" jdbcType="VARCHAR" />
+    <result column="author" property="author" jdbcType="VARCHAR" />
+    <result column="abstracts" property="abstracts" jdbcType="VARCHAR" />
+    <result column="source" property="source" jdbcType="VARCHAR" />
+    <result column="key_word" property="keyWord" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="del_flag" property="delFlag" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="deploy_time" property="deployTime" jdbcType="TIMESTAMP" />
+    <result column="article_address" property="articleAddress" jdbcType="VARCHAR" />
+    <result column="browse_count" property="browseCount" jdbcType="BIGINT" />
+    <result column="publish_type" property="publishType" jdbcType="INTEGER" />
+    <result column="seo_title" property="seoTitle" jdbcType="VARCHAR" />
+    <result column="seo_description" property="seoDescription" jdbcType="VARCHAR" />
+    <result column="imgUrl" property="imgurl" jdbcType="VARCHAR" />
+    <result column="article_id" property="articleId" jdbcType="INTEGER" />
+    <result column="successed" property="successed" jdbcType="INTEGER" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.waterelephant.entity.CmsArticle" extends="BaseResultMap" >
+    <result column="content" property="content" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, title, menu_id, menu_name, menu_name_cn, author, abstracts, source, key_word, 
+    status, del_flag, create_time, update_time, deploy_time, article_address, browse_count, 
+    publish_type, seo_title, seo_description, imgUrl, article_id, successed
+  </sql>
+  <sql id="Blob_Column_List" >
+    content
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from cms_article
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from cms_article
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.waterelephant.entity.CmsArticle" >
+    insert into cms_article (id, title, menu_id, 
+      menu_name, menu_name_cn, author, 
+      abstracts, source, key_word, 
+      status, del_flag, create_time, 
+      update_time, deploy_time, article_address, 
+      browse_count, publish_type, seo_title, 
+      seo_description, imgUrl, article_id, 
+      successed, content)
+    values (#{id,jdbcType=BIGINT}, #{title,jdbcType=VARCHAR}, #{menuId,jdbcType=INTEGER}, 
+      #{menuName,jdbcType=VARCHAR}, #{menuNameCn,jdbcType=VARCHAR}, #{author,jdbcType=VARCHAR}, 
+      #{abstracts,jdbcType=VARCHAR}, #{source,jdbcType=VARCHAR}, #{keyWord,jdbcType=VARCHAR}, 
+      #{status,jdbcType=INTEGER}, #{delFlag,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{updateTime,jdbcType=TIMESTAMP}, #{deployTime,jdbcType=TIMESTAMP}, #{articleAddress,jdbcType=VARCHAR}, 
+      #{browseCount,jdbcType=BIGINT}, #{publishType,jdbcType=INTEGER}, #{seoTitle,jdbcType=VARCHAR}, 
+      #{seoDescription,jdbcType=VARCHAR}, #{imgurl,jdbcType=VARCHAR}, #{articleId,jdbcType=INTEGER}, 
+      #{successed,jdbcType=INTEGER}, #{content,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.waterelephant.entity.CmsArticle"   useGeneratedKeys="true" keyProperty="id">
+    insert into cms_article
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="title != null" >
+        title,
+      </if>
+      <if test="menuId != null" >
+        menu_id,
+      </if>
+      <if test="menuName != null" >
+        menu_name,
+      </if>
+      <if test="menuNameCn != null" >
+        menu_name_cn,
+      </if>
+      <if test="author != null" >
+        author,
+      </if>
+      <if test="abstracts != null" >
+        abstracts,
+      </if>
+      <if test="source != null" >
+        source,
+      </if>
+      <if test="keyWord != null" >
+        key_word,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="delFlag != null" >
+        del_flag,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="deployTime != null" >
+        deploy_time,
+      </if>
+      <if test="articleAddress != null" >
+        article_address,
+      </if>
+      <if test="browseCount != null" >
+        browse_count,
+      </if>
+      <if test="publishType != null" >
+        publish_type,
+      </if>
+      <if test="seoTitle != null" >
+        seo_title,
+      </if>
+      <if test="seoDescription != null" >
+        seo_description,
+      </if>
+      <if test="imgurl != null" >
+        imgUrl,
+      </if>
+      <if test="articleId != null" >
+        article_id,
+      </if>
+      <if test="successed != null" >
+        successed,
+      </if>
+      <if test="content != null" >
+        content,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="title != null" >
+        #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="menuId != null" >
+        #{menuId,jdbcType=INTEGER},
+      </if>
+      <if test="menuName != null" >
+        #{menuName,jdbcType=VARCHAR},
+      </if>
+      <if test="menuNameCn != null" >
+        #{menuNameCn,jdbcType=VARCHAR},
+      </if>
+      <if test="author != null" >
+        #{author,jdbcType=VARCHAR},
+      </if>
+      <if test="abstracts != null" >
+        #{abstracts,jdbcType=VARCHAR},
+      </if>
+      <if test="source != null" >
+        #{source,jdbcType=VARCHAR},
+      </if>
+      <if test="keyWord != null" >
+        #{keyWord,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="delFlag != null" >
+        #{delFlag,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deployTime != null" >
+        #{deployTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="articleAddress != null" >
+        #{articleAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="browseCount != null" >
+        #{browseCount,jdbcType=BIGINT},
+      </if>
+      <if test="publishType != null" >
+        #{publishType,jdbcType=INTEGER},
+      </if>
+      <if test="seoTitle != null" >
+        #{seoTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="seoDescription != null" >
+        #{seoDescription,jdbcType=VARCHAR},
+      </if>
+      <if test="imgurl != null" >
+        #{imgurl,jdbcType=VARCHAR},
+      </if>
+      <if test="articleId != null" >
+        #{articleId,jdbcType=INTEGER},
+      </if>
+      <if test="successed != null" >
+        #{successed,jdbcType=INTEGER},
+      </if>
+      <if test="content != null" >
+        #{content,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.waterelephant.entity.CmsArticle" >
+    update cms_article
+    <set >
+      <if test="title != null" >
+        title = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="menuId != null" >
+        menu_id = #{menuId,jdbcType=INTEGER},
+      </if>
+      <if test="menuName != null" >
+        menu_name = #{menuName,jdbcType=VARCHAR},
+      </if>
+      <if test="menuNameCn != null" >
+        menu_name_cn = #{menuNameCn,jdbcType=VARCHAR},
+      </if>
+      <if test="author != null" >
+        author = #{author,jdbcType=VARCHAR},
+      </if>
+      <if test="abstracts != null" >
+        abstracts = #{abstracts,jdbcType=VARCHAR},
+      </if>
+      <if test="source != null" >
+        source = #{source,jdbcType=VARCHAR},
+      </if>
+      <if test="keyWord != null" >
+        key_word = #{keyWord,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="delFlag != null" >
+        del_flag = #{delFlag,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deployTime != null" >
+        deploy_time = #{deployTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="articleAddress != null" >
+        article_address = #{articleAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="browseCount != null" >
+        browse_count = #{browseCount,jdbcType=BIGINT},
+      </if>
+      <if test="publishType != null" >
+        publish_type = #{publishType,jdbcType=INTEGER},
+      </if>
+      <if test="seoTitle != null" >
+        seo_title = #{seoTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="seoDescription != null" >
+        seo_description = #{seoDescription,jdbcType=VARCHAR},
+      </if>
+      <if test="imgurl != null" >
+        imgUrl = #{imgurl,jdbcType=VARCHAR},
+      </if>
+      <if test="articleId != null" >
+        article_id = #{articleId,jdbcType=INTEGER},
+      </if>
+      <if test="successed != null" >
+        successed = #{successed,jdbcType=INTEGER},
+      </if>
+      <if test="content != null" >
+        content = #{content,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.waterelephant.entity.CmsArticle" >
+    update cms_article
+    set title = #{title,jdbcType=VARCHAR},
+      menu_id = #{menuId,jdbcType=INTEGER},
+      menu_name = #{menuName,jdbcType=VARCHAR},
+      menu_name_cn = #{menuNameCn,jdbcType=VARCHAR},
+      author = #{author,jdbcType=VARCHAR},
+      abstracts = #{abstracts,jdbcType=VARCHAR},
+      source = #{source,jdbcType=VARCHAR},
+      key_word = #{keyWord,jdbcType=VARCHAR},
+      status = #{status,jdbcType=INTEGER},
+      del_flag = #{delFlag,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      deploy_time = #{deployTime,jdbcType=TIMESTAMP},
+      article_address = #{articleAddress,jdbcType=VARCHAR},
+      browse_count = #{browseCount,jdbcType=BIGINT},
+      publish_type = #{publishType,jdbcType=INTEGER},
+      seo_title = #{seoTitle,jdbcType=VARCHAR},
+      seo_description = #{seoDescription,jdbcType=VARCHAR},
+      imgUrl = #{imgurl,jdbcType=VARCHAR},
+      article_id = #{articleId,jdbcType=INTEGER},
+      successed = #{successed,jdbcType=INTEGER},
+      content = #{content,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.waterelephant.entity.CmsArticle" >
+    update cms_article
+    set title = #{title,jdbcType=VARCHAR},
+      menu_id = #{menuId,jdbcType=INTEGER},
+      menu_name = #{menuName,jdbcType=VARCHAR},
+      menu_name_cn = #{menuNameCn,jdbcType=VARCHAR},
+      author = #{author,jdbcType=VARCHAR},
+      abstracts = #{abstracts,jdbcType=VARCHAR},
+      source = #{source,jdbcType=VARCHAR},
+      key_word = #{keyWord,jdbcType=VARCHAR},
+      status = #{status,jdbcType=INTEGER},
+      del_flag = #{delFlag,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      deploy_time = #{deployTime,jdbcType=TIMESTAMP},
+      article_address = #{articleAddress,jdbcType=VARCHAR},
+      browse_count = #{browseCount,jdbcType=BIGINT},
+      publish_type = #{publishType,jdbcType=INTEGER},
+      seo_title = #{seoTitle,jdbcType=VARCHAR},
+      seo_description = #{seoDescription,jdbcType=VARCHAR},
+      imgUrl = #{imgurl,jdbcType=VARCHAR},
+      article_id = #{articleId,jdbcType=INTEGER},
+      successed = #{successed,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

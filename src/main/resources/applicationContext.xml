@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="
+	http://www.springframework.org/schema/task  
+	http://www.springframework.org/schema/task/spring-task-3.2.xsd
+	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.1.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.1.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.1.xsd">
+	<context:component-scan base-package="com.waterelephant">
+		<context:exclude-filter type="annotation"
+			expression="org.springframework.stereotype.Controller" />
+	</context:component-scan>
+
+	<!-- 时间类型转换 -->
+	<bean id="conversionService"
+		  class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
+		<property name="formatters">
+			<set>
+				<bean class="com.waterelephant.common.utils.DateFormatter"></bean>
+			</set>
+		</property>
+	</bean>
+
+	<!-- task任务扫描注解 -->
+	<task:annotation-driven />
+	
+	<!-- 
+	<context:component-scan base-package="com.waterelephant"></context:component-scan>
+	 -->
+	
+	<!--加载数据源属性配置文件 -->
+	<bean id="propertyConfigurer"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations"> 
+			<list>
+               <value>classpath*:datasource.properties</value>
+               <value>classpath*:article.properties</value>
+            </list>
+		</property>
+		<property name="ignoreUnresolvablePlaceholders" value="true" />
+	</bean>
+
+	<!-- 数据源使用alibaba druid连接池 -->
+	<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource"
+		init-method="init" destroy-method="close">
+		<property name="url" value="${jdbc.url}" />
+		<property name="username" value="${jdbc.username}" />
+		<property name="password" value="${jdbc.password}" />
+		<property name="filters" value="stat" />
+		<property name="maxActive" value="${jdbc.maxActive}" />
+		<property name="initialSize" value="${jdbc.initialSize}" />
+		<property name="maxWait" value="${jdbc.maxWait}" />
+		<property name="minIdle" value="${jdbc.minIdle}" />
+		<property name="timeBetweenEvictionRunsMillis" value="3000" />
+		<property name="minEvictableIdleTimeMillis" value="300000" />
+		<property name="poolPreparedStatements" value="true" />
+		<property name="maxPoolPreparedStatementPerConnectionSize"
+			value="20" />
+		<property name="testWhileIdle" value="true" />
+		<property name="validationQuery" value="select 1" />
+	</bean>
+
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<!-- <property name="basePackage" value="com.waterelephant.controller.system.mapper,com.waterelephant.target.mapper,com.waterelephant.yimei.mapper,
+		com.waterelephant.third.zxt.mapper,com.waterelephant.third.yixin.mapper,com.waterelephant.third.roogtianji.mapper" /> -->
+		<property name="basePackage" value="com.waterelephant.mapper" />
+		
+	</bean>
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="typeAliasesPackage" value="com.waterelephant.common.entity" />
+		<property name="configLocation" value="classpath:mybatis-config.xml"></property>
+		<property name="mapperLocations" value="classpath*:mybatis/**/*Mapper.xml" />
+		<property name="plugins">
+			<array>
+				<bean class="com.github.pagehelper.PageHelper">
+					<property name="properties">
+						<value>
+							dialect=mysql
+							reasonable=true
+						</value>
+					</property>
+				</bean>
+				<bean class="tk.mybatis.mapper.mapperhelper.MapperInterceptor">
+					<property name="properties">
+						<value>
+							mappers=tk.mybatis.mapper.common.Mapper,tk.mybatis.mapper.common.MySqlMapper
+							IDENTITY=MySQL
+							notEmpty=true
+						</value>
+					</property>
+				</bean>
+			</array>
+		</property>
+	</bean>
+
+	<!-- 配置事务管理器 -->
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<!-- sqlMapper 实现自定义SQL执行 -->
+	<bean id="sqlMapper" class="com.waterelephant.common.utils.SqlMapper" scope="prototype">
+		<constructor-arg ref="sqlSession" />
+	</bean>
+
+	<bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate"
+		scope="prototype">
+		<constructor-arg index="0" ref="sqlSessionFactory" />
+	</bean>
+
+	<!-- 配置事务的传播特性 -->
+	<tx:advice id="txAdvice">
+		<tx:attributes>
+			<!--以save、delete、update字母开的的方法设置事务 -->
+			<tx:method name="ad*" propagation="REQUIRED" rollback-for="Exception" />
+			<tx:method name="theTrial*" propagation="REQUIRED" rollback-for="Exception" />
+			<tx:method name="final*" propagation="REQUIRED" rollback-for="Exception" />
+			<tx:method name="insert*" propagation="REQUIRED" rollback-for="Exception" />
+			<tx:method name="save*" propagation="REQUIRED"
+				rollback-for="Exception" />
+			<tx:method name="update*" propagation="REQUIRED"
+				rollback-for="Exception" />
+			<tx:method name="del*" propagation="REQUIRED" rollback-for="Exception" />
+			<tx:method name="bulk*" propagation="REQUIRED"
+				rollback-for="Exception" />
+			<tx:method name="check*" propagation="REQUIRED"
+				rollback-for="Exception" />
+			<tx:method name="reject*" propagation="REQUIRED"
+				rollback-for="Exception" />
+			<tx:method name="generate*" propagation="REQUIRED"
+				rollback-for="Exception" />
+			<tx:method name="deploy*" propagation="REQUIRED"
+					   rollback-for="Exception" />
+			<!--其他方法事务只读，提高性能 -->
+			<tx:method name="*" propagation="REQUIRED" read-only="true" /> 
+		</tx:attributes>
+	</tx:advice>
+
+	<!--配置参与事务的方法 -->
+	<aop:config>
+		<aop:pointcut id="businessLogicServices"
+				expression="execution(* com.waterelephant.service..*.*(..))" />
+		<aop:advisor pointcut-ref="businessLogicServices"
+			advice-ref="txAdvice" />
+	</aop:config>
+	
+
+	<!--文件上传 -->
+	<bean id="multipartResolver"
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="maxUploadSize" value="1000000000" />
+		<property name="defaultEncoding">
+			<value>UTF-8</value>
+		</property>
+	</bean>
+	
+	<!-- 定义获取spring上下文工具类 -->
+	<bean id="springContext" class="com.waterelephant.common.utils.SpringContext"></bean>
+</beans>
